@@ -35,6 +35,18 @@ module.exports = {
             options.outputFilePath = path.resolve(options.outputFilePath)
         }
 
+        let templatePath = path.join(__dirname, "template", "template.html")
+
+        if (options.templateFilePath && options.templateFilePath.trim() !== "") {
+            templatePath = options.templateFilePath
+        }
+
+        if (!templatePath || !fs.existsSync(templatePath)) {
+            throw new Error(`[pretty-md-pdf] ERROR: Template file ${templatePath} does not exist`)
+        }
+
+        let template = fs.readFileSync(templatePath).toString();
+
         console.log(`[pretty-md-pdf] Converting markdown file: ${options.markdownFilePath}`)
 
         await markdownPdf.init(config)
@@ -43,7 +55,8 @@ module.exports = {
             options.outputFilePath,
             options.outputFileType,
             options.chromiumArgs,
-            config
+            config,
+            template
         )
     }
 }

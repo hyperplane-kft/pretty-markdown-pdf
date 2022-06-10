@@ -25,7 +25,7 @@ function parseArguments() {
             type: "string"
         })
         .options("output-type", {
-            alias: "t",
+            alias: "ot",
             describe: "Format to export",
             default: "pdf",
             choices: exportTypes
@@ -41,6 +41,12 @@ function parseArguments() {
             describe: "Path to the JSON config file to use",
             type: "string",
             default: path.join(__dirname, "..", "config.json")
+        })
+        .option("template", {
+            alias: "t",
+            describe: "Path to the template file to use",
+            type: "string",
+            default: path.join(__dirname, "..", "template", "template.html")
         })
         .demandOption("input")
         .argv
@@ -69,7 +75,8 @@ function getOptions() {
         outputFilePath: args.output,
         outputFileType: args["output-type"],
         chromiumArgs,
-        configFilePath: args.config
+        configFilePath: args.config,
+        templateFilePath: args.template
     }
 }
 

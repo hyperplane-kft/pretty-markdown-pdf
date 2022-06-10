@@ -8,7 +8,7 @@ const exportTypes = require("./export-types.json")
 
 let INSTALL_CHECK = false
 
-async function convertMarkdown(inputMarkdownFile, outputFilePath, outputFileType, chromiumArgs, config) {
+async function convertMarkdown(inputMarkdownFile, outputFilePath, outputFileType, chromiumArgs, config, template) {
   try {
     // check active window
     let ext = path.extname(inputMarkdownFile)
@@ -46,7 +46,7 @@ async function convertMarkdown(inputMarkdownFile, outputFilePath, outputFileType
           filename = inputMarkdownFile.replace(ext, "." + type)
           let text = fs.readFileSync(inputMarkdownFile).toString()
           let content = convertMarkdownToHtml(inputMarkdownFile, type, text, config)
-          let html = makeHtml(content, uri, config)
+          let html = makeHtml(content, uri, config, template)
           await exportPdf(html, filename, outputFilePath, type, uri, chromiumArgs, config)
         } else {
           showErrorMessage(`Supported formats: ${exportTypes.join(", ")}.`)
@@ -217,7 +217,7 @@ function slug(string) {
 /*
  * make html
  */
-function makeHtml(data, uri, config) {
+function makeHtml(data, uri, config, template) {
   try {
     // read styles
     let style = ""
@@ -225,10 +225,6 @@ function makeHtml(data, uri, config) {
 
     // get title
     let title = path.basename(uri.fsPath)
-
-    // read template
-    let filename = path.join(__dirname, "template", "template.html")
-    let template = readFile(filename)
 
     // compile template
     let mustache = require("mustache")
